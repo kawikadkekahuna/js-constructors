@@ -11,6 +11,12 @@
  * @method   printDetails
  */
 
+function Spell(name,cost,description){
+
+   this.name = name;
+   this.cost = cost;
+   this.description = description;
+
   /**
    * @method printDetails
    * 
@@ -20,6 +26,13 @@
    * note: using comma separated arguments for console.log() will not satisfy the tests
    * e.g. console.log(a, b, c); <-- no commas, please use string concatenation.
    */
+
+   this.printDetails = function(){
+
+      console.log('name ' + this.name + ' cost ' + this.cost + ' and does ' + this.description);
+
+   };
+}
 
 /**
  * A spell that deals damage.
@@ -43,8 +56,21 @@
  * @property {string} name
  * @property {number} cost
  * @property {number} damage
- * @property {string} description
+ * @property {string} description   
  */
+
+function DamageSpell(name,cost,damage,description){
+
+   Spell.call(this,name,cost,description);
+   this.description = description;
+   this.damage = damage;  
+ }
+
+ DamageSpell.prototype = Object.create(Spell.prototype, {
+   constructor: {
+      value: Spell
+   }
+ });
 
 /**
  * Now that you've created some spells, let's create
@@ -63,6 +89,16 @@
  * @method  invoke
  */
 
+function Spellcaster(name,health,mana){
+   DamageSpell.call(this,name);
+   this.health = health;
+   this.mana = mana;
+   this.isAlive = true;
+
+  
+
+ 
+
   /**
    * @method inflictDamage
    * 
@@ -74,6 +110,18 @@
    * @param  {number} damage  Amount of damage to deal to the spellcaster
    */
 
+   this.inflictDamage = function(damage){
+      this.health -= damage;
+
+      if((this.health - damage) < 0){
+         this.health = 0;
+      }
+
+      if(this.health === 0){
+         this.isAlive = false;
+      }
+   };
+
   /**
    * @method spendMana
    * 
@@ -83,6 +131,16 @@
    * @param  {number} cost      The amount of mana to spend.
    * @return {boolean} success  Whether mana was successfully spent.
    */
+   this.spendMana = function(cost){
+
+      if(this.mana >= cost){
+      this.mana -= cost;
+      return true;
+   }else{
+      return false;
+   }
+
+};
 
   /**
    * @method invoke
@@ -110,3 +168,30 @@
    * @param  {Spellcaster} target         The spell target to be inflicted.
    * @return {boolean}                    Whether the spell was successfully cast.
    */
+
+this.invoke = function(spell,target){
+
+   if(spell instanceof Spell && !(spell instanceof DamageSpell)){
+      if(this.mana >= spell.cost){
+         this.spendMana(spell.cost);
+         return true;
+      }else{
+         return false;
+      }
+   }
+
+   if((spell instanceof DamageSpell) && (target instanceof Spellcaster) && (spell.cost <= this.mana)) {
+
+      this.spendMana(spell.cost);
+      target.inflictDamage(spell.damage);
+      return true;
+
+   }else{
+      return false;
+   }
+
+
+
+
+   };
+}

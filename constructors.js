@@ -1,10 +1,10 @@
-]
+
 function Spell(name,cost,description){
 
    this.name = name;
    this.cost = cost;
    this.description = description;
-]
+
 
    this.printDetails = function(){
 
@@ -13,10 +13,7 @@ function Spell(name,cost,description){
    };
 }
 
-
-
 function DamageSpell(name,cost,damage,description){
-
    Spell.call(this,name,cost,description);
    this.description = description;
    this.damage = damage;  
@@ -27,15 +24,11 @@ function DamageSpell(name,cost,damage,description){
       value: Spell
    }
  });
-
-
-
 function Spellcaster(name,health,mana){
    DamageSpell.call(this,name);
    this.health = health;
    this.mana = mana;
    this.isAlive = true;
-
 
 
    this.inflictDamage = function(damage){
@@ -61,7 +54,6 @@ function Spellcaster(name,health,mana){
 };
 
 this.invoke = function(spell,target){
-
    if(spell instanceof Spell && !(spell instanceof DamageSpell)){
       if(this.mana >= spell.cost){
          this.spendMana(spell.cost);
@@ -70,7 +62,6 @@ this.invoke = function(spell,target){
          return false;
       }
    }
-
    if((spell instanceof DamageSpell) && (target instanceof Spellcaster) && (spell.cost <= this.mana)) {
 
       this.spendMana(spell.cost);
@@ -80,9 +71,5 @@ this.invoke = function(spell,target){
    }else{
       return false;
    }
-
-
-
-
-   };
+  };
 }
